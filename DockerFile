@@ -1,0 +1,90 @@
+#****NOTE*******: We use and maintain same Hierarchy or We use Same Structure for whatever the projects we do in our Course and also we maintain same heirarchy of 
+#Folders We use For Every Project.This Dockerfile is basically Public Docker Container It is available for anyone.In some Companies the "base images" are Private
+#Bcs the images are Created by their own for Every Company they are called as "Private Images" and not used by anyone Except the persons in that related Company.
+#The Images which are created by the companies on their own itself We can also call them as "Private Hub" From this we can extract the images by using access 
+#permissions and authentication,access levels etc..Most of the Productionalized Projects are taken from "Private Hub" only Bcs they are company specific Docker 
+#Hubs
+
+#NOTE:Docker itself is maintaing isolated environment for us.We need not maintain separate environment for Docker..Here We are maintaining a separate Containor or 
+#Environment it means we don't need to maintain any separate environment isolately Bcs Docker itself is maintaining separate environment for Us.
+
+#NOTE:The driving force for any Environment like devenvironment, stageenvironment etc.. is "Requirements.txt" if we provide or Put this into Docker Bcs Docker works 
+#for any environment and it executes without any errors or compatibility issues.Whatever we run in Docker No other applications at outside or Os can't be find Bcs it 
+#is #completely isolated from outside  "Docker" is like a poppet
+ 
+#A Dockerfile is indeed a text file that contains instructions to build a Docker image. A Docker image is a self-contained package that includes all the dependencies 
+#and configurations required to run an application. When you build a Docker image using a Dockerfile, Docker reads the instructions in the file and creates a new image 
+#that includes all the files and dependencies specified in the file.
+
+#Once you have a Docker image, you can use it to create a Docker container. A container is an instance of an image that runs your application. One of the benefits of 
+#using Docker is that the container is isolated from the host system, so you can run your application without worrying about compatibility issues with the host OS or 
+#other software.
+
+#In a Dockerfile, you can specify various tasks such as installing software packages, copying files, setting environment variables, and configuring network settings. 
+#These tasks are executed when the Docker image is built, and they determine what the resulting image will contain.
+
+#Using a Dockerfile ensures that your application runs consistently across different environments and platforms, as the Docker image contains everything needed to run 
+#the application. This makes it easier to deploy and scale your application.
+
+#Overall, Docker and Dockerfiles are essential tools for creating and deploying applications in a containerized environment. They provide a convenient and efficient 
+#way to package and run your application in a self-contained, isolated environment.
+
+#NOTE: But in our course we don't learn about "docker" So we are not discussing it in more detail.
+
+#NOTE:In Docker, everything that is defined in a Dockerfile is used to create a container image. This includes the base image, any packages or dependencies installed, 
+#and any code or scripts that are added to the image.So, if you have a Dockerfile that installs Python and Ubuntu or Windows as the base operating system, then 
+#everything that is defined in that Dockerfile will be used to create the container image. This image can then be used to create new containers that run the 
+#applications or services defined in the Dockerfile.It's worth noting that Docker images are designed to be lightweight and portable, so they typically include only 
+#the components necessary to run the application or service in question. This can make them more efficient than traditional virtual machines, which often include a 
+#full operating system and other components that may not be needed.
+
+#NOTE:We have a website called "docker hub" in that We can find what types of images we have by typing in search bar as "Ubuntu", "linux", "Python" etc..
+#All these commands which we are writing will be Performed in Docker container like installations, Path Setting,Copying etc...
+
+FROM python      
+
+#In a Dockerfile, the COPY instruction is used to copy files and directories from the host machine into the Docker image. 
+#NOTE:In the COPY instruction, the destination directory inside the Docker image is specified as /src. This means that a directory named src will be created at the 
+#root of the Docker image, and the contents of the src directory on the host machine will be copied into it.Here "dest" folder also keep as "path" or "app" anything
+
+#************NOTE***************: Before We RUN any file using "RUN" in Dockerfile we have to Copy the file into Dockerfile or container or image using "COPY" command
+COPY src /src
+
+#The WORKDIR instruction in a Dockerfile sets the working directory for any subsequent instructions that are executed in the Docker image. The syntax for the WORKDIR 
+#instruction is: WORKDIR /path/to/directory In this example, the working directory is set to /path/to/directory.In the case of WORKDIR /src, the working directory is 
+#set to the /src directory inside the Docker image. This means that any subsequent RUN, CMD, ENTRYPOINT, COPY, or ADD instructions that are executed in the Docker 
+#image will be executed with the working directory set to /src.
+#NOTE:Setting the working directory can be useful if your application requires a specific directory structure or if you need to execute commands or scripts that assume 
+#a certain working directory. By setting the working directory to the correct location, you can ensure that your commands and scripts will work as expected.Additionally, 
+#setting the working directory to a specific location can make it easier to manage and organize your files and directories inside the Docker image.
+WORKDIR /src
+
+#We also need to COPY "requirements.txt" into destination Folder of DockerImage from our host System
+COPY  requirements.txt /src/
+
+COPY setup.sh /src
+
+#***********************************NOTE*********: We use "RUN" command to Run the files to perform the operations only Before  we start our program(main.py)
+
+#Here we need to use "RUN" command inorder to update "apt" Bcs basically here "Python" is an Ubuntu version.For all Ubuntu versions "apt" is an Package manager
+#Using this package manager only we need to install any application or Packages or update etc..Before we need to update "apt" package manager Here
+#NOTE:The command "apt-get update" updates the local package index with the latest available versions of software packages in the repository. This ensures that any 
+#subsequent package installations or upgrades are based on the latest package information.In the context of Docker, this command is often used as part of the build 
+#process to ensure that the container is created with the latest available packages. It is a best practice to include "RUN apt-get update" before any package 
+#installation or upgrade command in a Dockerfile to ensure that the container is created with the latest package information.
+RUN apt-get update
+
+#It installs the all the requirements which we installed in "requirements.txt" in DockerContainer(Image)
+RUN pip install -r requirements.txt
+
+#It has to be run before we start our program in Dockerfile
+#Here through "bash" we are running "setup.sh"
+RUN bash setup.sh
+
+#CMD python main.py" is a command that can be used in a Dockerfile to specify the default command that will be run when a Docker container is started based on the image 
+#created from that Dockerfile.In this case, the command is telling Docker to run the Python interpreter and execute the "main.py" script. This assumes that the Docker 
+#image contains the necessary dependencies and code to run the "main.py" script.When the container is started, Docker will automatically execute this command, making 
+#the Python script the entry point for the container. This is useful for creating self-contained, executable environments for running Python applications.
+#Note that only one CMD instruction can be specified in a Dockerfile. If multiple CMD instructions are included, only the last one will be used.
+CMD python main.py
+
