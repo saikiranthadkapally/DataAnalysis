@@ -1,1 +1,1 @@
-DATAANALYSIS
+This project is to visually and statistically analyzing data to gain insights, understand patterns, and identify relationships between variables and creating or transforming features (variables) in a dataset to improve the performance of machine learning model
